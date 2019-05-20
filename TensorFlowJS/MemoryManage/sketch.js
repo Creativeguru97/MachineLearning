@@ -3,6 +3,7 @@ function setup(){
 }
 
 function draw(){
+  frameRate(1);
   const values = [];
   for(let i = 0; i < 15000; i++){
     values[i] = random(0, 100);
@@ -11,14 +12,12 @@ function draw(){
   // const shape2 = [3, 5];
 
   //Math operation
-  // const test = tf.tensor2d(values, shape1);
   tf.tidy(() => {//tidy up the allcation!!!!
     const a = tf.tensor2d(values, shape1, 'int32');
     const b = tf.tensor2d(values, shape1, 'int32');
     const b_t = b.transpose();
     const c = a.matMul(b_t);
     //Do something meaningful stuff with tensorflow
-    // tf.keep(b_t);//Keep certain tensor even inside tf.tidy()
   });
 
 
