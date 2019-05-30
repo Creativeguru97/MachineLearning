@@ -20,7 +20,6 @@ function preload(){
   testLabel = loadJSON("testLabel.json");
 }
 
-
 function trainDataCheck(index){
   let trainImageIndex = index; //must be 0 - 79
   image(trainImg[trainImageIndex], 0, 0);
@@ -73,9 +72,9 @@ function train(){
       let inputs = [];
       for(let i = 0; i < imagePixelSize; i++){
         let bright = canvasImage.pixels[i*4];//Only take braightness value
-        inputs[i] = bright / 255.0; //Normalizing
+        inputs[i] = bright / 255; //Normalizing
       }
-
+      print(inputs);
       //Taking labels from JSON
       let targets = [];
       let labelXS = trainLabel.coordinates[i].xs/128;
@@ -92,21 +91,53 @@ function train(){
 }
 
 function guess(){
+  shuffle(testImg, true);
+  // for(let i = 0; i < testImg.length; i++){
+    image(testImg[0], 0, 0);//Display the image
+    let d = pixelDensity();
+    let canvasImage = get();
+    canvasImage.loadPixels();//Taking pixels on display
 
+    //Make inputs
+    let inputs = [];
+    for(let i = 0; i < imagePixelSize; i++){
+      let bright = canvasImage.pixels[i];//Only take braightness value
+      inputs[i] = bright / 255.0; //Normalizing
+    }
+
+    // for(let i = 0; i < imagePixelSize; i++){
+    //   print(inputs[0]);
+    // }
+
+    //Taking labels from JSON
+    let targets = [];
+    let labelXS = testLabel.coordinates[0].xs/128;
+    let labelYS = testLabel.coordinates[0].ys/128;
+    let labelXE = testLabel.coordinates[0].xe/128;
+    let labelYE = testLabel.coordinates[0].ye/128;
+    targets.push(labelXS);
+    targets.push(labelYS);
+    targets.push(labelXE);
+    targets.push(labelYE);
+
+    let guess = nn.feedforward(inputs);
+    print(guess);
+  // }
 }
 
 
 function setup(){
   createCanvas(128, 128);
-  background(0);
+  background(255);
 
   nn = new NeuralNetwork(imagePixelSize, 128, 4);
 
-  trainDataCheck(44);//Number must be 0 - 79
-  // trainDataCheck(6);//Number must be 0 - 10
+  trainDataCheck(24);//Number must be 0 - 79
+  testDataCheck(1);//Number must be 0 - 10
 
   let trainButton = select('#train');
   let epochCounter = 0;
+
   for(let epoch = 0; epoch < 2; epoch++){
     trainButton.mousePressed(function(){
       train();
@@ -114,4 +145,13 @@ function setup(){
       console.log("Epoch: "+epochCounter);
     });
   }
+
+  let testButton = select('#guess');
+    testButton.mousePressed(function(){
+  guess();
+  });
+
+}
+
+function draw(){
 }
