@@ -1,46 +1,70 @@
-let img = [];
-let label;
-const imageTotal = 80;
+let trainImg = [];
+let testImg = [];
+
+let trainLabel;
+let testLabel;
+const trainImageTotal = 80;
+const testImageTotal = 10;
 const imagePixelSize = 16384;
 let epoch = 10;
 
 function preload(){
-  for(let i = 0; i < imageTotal; i++){
-    img[i] = loadImage('data/saber'+nf(i, 2)+'.png');
+  for(let i = 0; i < trainImageTotal; i++){
+    trainImg[i] = loadImage('trainingData/saber'+nf(i, 2)+'.png');
   }
-  label = loadJSON("label.json");
+  trainLabel = loadJSON("trainLabel.json");
+
+  for(let i = 0; i < testImageTotal; i++){
+    testImg[i] = loadImage('testData/saber'+nf(i, 2)+'.png');
+  }
+  testLabel = loadJSON("testLabel.json");
 }
 
 
-function setup(){
-  createCanvas(128, 128);
-  background(0);
+function trainDataCheck(index){
+  let trainImageIndex = index; //must be 0 - 79
+  image(trainImg[trainImageIndex], 0, 0);
 
-  nn = new NeuralNetwork(imagePixelSize, 128, 3);
+  let coordXS = trainLabel.coordinates[trainImageIndex].xs;
+  let coordYS = trainLabel.coordinates[trainImageIndex].ys;
+  let coordXE = trainLabel.coordinates[trainImageIndex].xe;
+  let coordYE = trainLabel.coordinates[trainImageIndex].ye;
 
-
-  let imageIndex = 28; //0 - 79
-  image(img[imageIndex], 0, 0);
-
-  let labelXS = label.coordinates[imageIndex].xs;
-  let labelYS = label.coordinates[imageIndex].ys;
-  let labelXE = label.coordinates[imageIndex].xe;
-  let labelYE = label.coordinates[imageIndex].ye;
-  print(labelXS);
-  print(labelYS);
-  print(labelXE);
-  print(labelYE);
+  print(coordXS);
+  print(coordYS);
+  print(coordXE);
+  print(coordYE);
 
   strokeWeight(4);
   stroke(255, 0, 0);
-  line(labelXS, labelYS, labelXE, labelYE);
+  line(coordXS, coordYS, coordXE, coordYE);
 }
+
+function testDataCheck(index){
+  let testImageIndex = index; //must be 0 - 9
+  image(testImg[testImageIndex], 0, 0);
+
+  let coordXS = testLabel.coordinates[testImageIndex].xs;
+  let coordYS = testLabel.coordinates[testImageIndex].ys;
+  let coordXE = testLabel.coordinates[testImageIndex].xe;
+  let coordYE = testLabel.coordinates[testImageIndex].ye;
+
+  print(coordXS);
+  print(coordYS);
+  print(coordXE);
+  print(coordYE);
+
+  strokeWeight(4);
+  stroke(255, 0, 0);
+  line(coordXS, coordYS, coordXE, coordYE);
+}
+
 
 //display image then loading every pixels
 function train(){
-  for(let e = 0; e < epoch; e++){
-    for(let i = 0; i < img.length; i++){
-      image(img[i], 0, 0);//Display the image
+  shuffle(trainImg, true);
+    for(let i = 0; i < trainImg.length; i++){
+      image(trainImg[i], 0, 0);//Display the image
       let d = pixelDensity();
       let canvasImage = get();
       canvasImage.loadPixels();//Taking pixels on display
@@ -53,14 +77,41 @@ function train(){
       }
 
       //Taking labels from JSON
-      let label = [];
-      let labelXS = label.coordinates[imageIndex].xs;
-      let labelYS = label.coordinates[imageIndex].ys;
-      let labelXE = label.coordinates[imageIndex].xe;
-      let labelYE = label.coordinates[imageIndex].ye;
+      let targets = [];
+      let labelXS = trainLabel.coordinates[i].xs/128;
+      let labelYS = trainLabel.coordinates[i].ys/128;
+      let labelXE = trainLabel.coordinates[i].xe/128;
+      let labelYE = trainLabel.coordinates[i].ye/128;
+      targets.push(labelXS);
+      targets.push(labelYS);
+      targets.push(labelXE);
+      targets.push(labelYE);
 
-      train(inputs, )
-
+      nn.train(inputs, targets);
     }
+}
+
+function guess(){
+
+}
+
+
+function setup(){
+  createCanvas(128, 128);
+  background(0);
+
+  nn = new NeuralNetwork(imagePixelSize, 128, 4);
+
+  trainDataCheck(44);//Number must be 0 - 79
+  // trainDataCheck(6);//Number must be 0 - 10
+
+  let trainButton = select('#train');
+  let epochCounter = 0;
+  for(let epoch = 0; epoch < 2; epoch++){
+    trainButton.mousePressed(function(){
+      train();
+      epochCounter++;
+      console.log("Epoch: "+epochCounter);
+    });
   }
 }
