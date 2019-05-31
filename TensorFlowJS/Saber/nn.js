@@ -24,11 +24,7 @@ class NeuralNetwork{
     this.bias_o = new Matrix(this.output_nodes, 1);
     this.bias_h.randomize();
     this.bias_o.randomize();
-    this.learning_rate;
-  }
-
-  learningRate(val){
-    this.learning_rate = val;
+    this.learning_rate = 0.5;
   }
 
   feedforward(input_array){
@@ -63,11 +59,14 @@ class NeuralNetwork{
     let outputs = Matrix.multiply(this.weights_HO, hidden);//h * O
     outputs.add(this.bias_o);//h * O + b2
     outputs.map(sigmoid);
+    // console.log(outputs);
 //----------------------------------------------------------
     //Backpropagation
     let targets = Matrix.fromArray(target_array);
+    // console.log(targets);
     //Calculate the console.error
     let output_errors = Matrix.subtract(targets, outputs);//Error = targets(answer) - outputs
+    // console.log(output_errors);
     //Gradient Desent Calculation
     let gradients = Matrix.map(outputs, derivativeSigmoid);// let gradient = outputs * (1 - outputs);
     gradients.multiply(output_errors);

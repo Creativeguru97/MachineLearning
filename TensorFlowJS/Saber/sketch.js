@@ -1,3 +1,4 @@
+let nn;
 let trainImg = [];
 let testImg = [];
 
@@ -5,6 +6,8 @@ let trainLabel;
 let testLabel;
 const trainImageTotal = 80;
 const testImageTotal = 10;
+let testImgIndex = 0;
+let trainImgIndex = 3;
 const imagePixelSize = 16384;
 let epoch = 10;
 
@@ -74,7 +77,7 @@ function train(){
         let bright = canvasImage.pixels[i*4];//Only take braightness value
         inputs[i] = bright / 255; //Normalizing
       }
-      print(inputs);
+      // print(inputs);
       //Taking labels from JSON
       let targets = [];
       let labelXS = trainLabel.coordinates[i].xs/128;
@@ -91,38 +94,49 @@ function train(){
 }
 
 function guess(){
-  shuffle(testImg, true);
-  // for(let i = 0; i < testImg.length; i++){
-    image(testImg[0], 0, 0);//Display the image
-    let d = pixelDensity();
-    let canvasImage = get();
-    canvasImage.loadPixels();//Taking pixels on display
+    // shuffle(testImg, true);
+      image(testImg[testImgIndex], 0, 0);//Display the image
 
-    //Make inputs
-    let inputs = [];
-    for(let i = 0; i < imagePixelSize; i++){
-      let bright = canvasImage.pixels[i];//Only take braightness value
-      inputs[i] = bright / 255.0; //Normalizing
-    }
+      print(testImgIndex);
+      let d = pixelDensity();
+      let canvasImage = get();
+      canvasImage.loadPixels();//Taking pixels on display
 
-    // for(let i = 0; i < imagePixelSize; i++){
-    //   print(inputs[0]);
-    // }
+      //Make inputs
+      let inputs = [];
+      for(let i = 0; i < imagePixelSize; i++){
+        let bright = canvasImage.pixels[i*4];//Only take braightness value
+        inputs[i] = bright / 255.0; //Normalizing
+      }
 
-    //Taking labels from JSON
-    let targets = [];
-    let labelXS = testLabel.coordinates[0].xs/128;
-    let labelYS = testLabel.coordinates[0].ys/128;
-    let labelXE = testLabel.coordinates[0].xe/128;
-    let labelYE = testLabel.coordinates[0].ye/128;
-    targets.push(labelXS);
-    targets.push(labelYS);
-    targets.push(labelXE);
-    targets.push(labelYE);
+      // print(inputs);
 
-    let guess = nn.feedforward(inputs);
-    print(guess);
-  // }
+      let guess = nn.feedforward(inputs);
+      let guessCoordinaites = [];
+      // print(inputs);
+      for(let i=0; i < guess.length; i++){
+        // print(guess.length);
+        // print(guess[i]*128);
+        guessCoordinaites.push(guess[i]*128);
+      }
+      print(guessCoordinaites);
+
+      //Taking labels from JSON
+      let coordXS = testLabel.coordinates[testImgIndex].xs;
+      let coordYS = testLabel.coordinates[testImgIndex].ys;
+      let coordXE = testLabel.coordinates[testImgIndex].xe;
+      let coordYE = testLabel.coordinates[testImgIndex].ye;
+
+      // print(coordXS);
+      // print(coordYS);
+      // print(coordXE);
+      // print(coordYE);
+
+      strokeWeight(4);
+      stroke(255, 0, 0);
+      line(coordXS, coordYS, coordXE, coordYE);
+      stroke(66, 200, 244);
+      line(guessCoordinaites[0], guessCoordinaites[1], guessCoordinaites[2], guessCoordinaites[3]);
 }
 
 
@@ -132,13 +146,12 @@ function setup(){
 
   nn = new NeuralNetwork(imagePixelSize, 128, 4);
 
-  trainDataCheck(24);//Number must be 0 - 79
-  testDataCheck(1);//Number must be 0 - 10
+  // trainDataCheck(24);//Number must be 0 - 79
+  // testDataCheck(0);//Number must be 0 - 10
 
   let trainButton = select('#train');
   let epochCounter = 0;
-
-  for(let epoch = 0; epoch < 2; epoch++){
+  for(let epoch = 0; epoch < 500; epoch++){
     trainButton.mousePressed(function(){
       train();
       epochCounter++;
@@ -148,9 +161,8 @@ function setup(){
 
   let testButton = select('#guess');
     testButton.mousePressed(function(){
-  guess();
+    guess();
   });
-
 }
 
 function draw(){
