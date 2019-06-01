@@ -51,7 +51,7 @@ class NeuralNetwork{
     //Generating the Hidden outputs !!!
     let inputs = Matrix.fromArray(input_array);//Make input matrix from array
     let hidden = Matrix.multiply(this.weights_IH, inputs);//I * H
-
+    // print(inputs);
     hidden.add(this.bias_h);//I * H + b (= h)
     hidden.map(sigmoid);
 
