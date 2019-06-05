@@ -1,4 +1,7 @@
 let nn;
+//Create model
+const NNmodel;
+
 let trainImg = [];
 let testImg = [];
 
@@ -7,9 +10,12 @@ let testLabel;
 const trainImageTotal = 80;
 const testImageTotal = 10;
 let testImgIndex = 0;
+let trainImgIndex = 3;
 const imagePixelSize = 16384;
 const imagePixelSize2 = 784;
 
+
+let epoch = 10;
 
 function preload(){
   for(let i = 0; i < trainImageTotal; i++){
@@ -72,37 +78,29 @@ function testDataCheck(index){
   line(coordXS, coordYS, coordXE, coordYE);
 }
 
-function prepareInputs(){
-  let allInputs = [];
-
-  for(let i = 0; i < trainImg.length; i++){
-    image(trainImg[i], 0, 0);//Display the image
-    let d = pixelDensity();
-    let canvasImage = get();
-    canvasImage.resize(28, 28);
-    canvasImage.loadPixels();//Taking pixels on display
-
-    let input = [];
-    for(let i = 0; i < imagePixelSize2; i++){
-      let bright = canvasImage.pixels[i*4];//Only take braightness value
-      input[i] = bright / 255; //Normalizing
-    }
-
-    allInputs.push(input);
-  }
-  return allInputs;
-}
 
 //display image then loading every pixels
-function train(allInputs, epochNum){
-  let epoch = epochNum;
-  let epochCounter = 0;
+function train(){
+  shuffle(trainImg, true);
+    for(let i = 0; i < trainImg.length; i++){
+      image(trainImg[i], 0, 0);//Display the image
+      let d = pixelDensity();
+      let canvasImage = get();
+      canvasImage.resize(28, 28);
+      canvasImage.loadPixels();//Taking pixels on display
 
-  for(let i = 0; i < epochNum; i++){
-  shuffle(allInputs, true);
-    for(let i = 0; i < allInputs.length; i++){
-      let input = allInputs[i];
-      // print(input);
+      //Make inputs
+      // let inputs = [];
+      // for(let i = 0; i < imagePixelSize; i++){
+      //   let bright = canvasImage.pixels[i*4];//Only take braightness value
+      //   inputs[i] = bright / 255; //Normalizing
+      // }
+      let inputs = [];
+      for(let i = 0; i < imagePixelSize2; i++){
+        let bright = canvasImage.pixels[i*4];//Only take braightness value
+        inputs[i] = bright / 255; //Normalizing
+      }
+      // print(inputs);
 
       //Taking labels from JSON
       let targets = [];
@@ -116,12 +114,9 @@ function train(allInputs, epochNum){
       targets.push(labelXE);
       targets.push(labelYE);
 
-      nn.train(input, targets);
+      nn.train(inputs, targets);
       // canvasImage.updatePixels();
     }
-    epochCounter++;
-    console.log("Epoch: "+epochCounter);
-  }
 }
 
 function guess(){
@@ -134,6 +129,12 @@ function guess(){
       canvasImage.resize(28, 28);
       canvasImage.loadPixels();//Taking pixels on display
 
+      //Make inputs
+      // let inputs = [];
+      // for(let i = 0; i < imagePixelSize; i++){
+      //   let bright = canvasImage.pixels[i*4];//Only take braightness value
+      //   inputs[i] = bright / 255.0; //Normalizing
+      // }
       let inputs = [];
       for(let i = 0; i < imagePixelSize2; i++){
         let bright = canvasImage.pixels[i*4];//Only take braightness value
@@ -169,24 +170,55 @@ function guess(){
       // canvasImage.updatePixels();//Taking pixels on display
 }
 
+
 function setup(){
   createCanvas(128, 128);
   // createCanvas(56, 56);
   background(0);
 
+  NNmodel = tf.sequential();
+
+  //Create H and O layer, then add the model
+  const hidden = tf.layers.dense({
+    units:64,//Number of nodes
+    inputShape: [784],
+    // activation: "relu"
+    activation: "sigmoid"
+  });
+  NNmodel.add(hidden);
+
+  const output = tf.layers.dense({
+    units: 4,//Number of nodes
+    inputShape: [64],
+    // activation: "relu"
+    activation: "sigmoid"
+  });
+  NNmodel.add(output);
+
+  //An optimizer using gradient descent
+  const sgdOpt = tf.train.sgd(0.5);
+
+  //Compile the configured model
+  NNmodel.compile({
+    optimizer: sgdOpt,
+    loss: "meanSquaredError"
+  });
+
   // nn = new NeuralNetwork(imagePixelSize, 128, 4);
   nn = new NeuralNetwork(imagePixelSize2, 128, 4);
 
   // trainDataCheck(79);//Number must be 0 - 79
-  // testDataCheck(6);//Number must be 0 - 9
-
-  let allInputs = prepareInputs();
-  // print(allInputs);
+  testDataCheck(0);//Number must be 0 - 10
 
   let trainButton = select('#train');
+  let epochCounter = 0;
+  // for(let epoch = 0; epoch < 20; epoch++){
     trainButton.mousePressed(function(){
-      train(allInputs, 1000);
+      train();
+      epochCounter++;
+      console.log("Epoch: "+epochCounter);
     });
+  // }
 
   let testButton = select('#guess');
     testButton.mousePressed(function(){
@@ -197,4 +229,7 @@ function setup(){
   clearButton.mousePressed(function(){
     background(0);
   });
+}
+
+function draw(){
 }
