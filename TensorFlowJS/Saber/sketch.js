@@ -185,7 +185,7 @@ function setup(){
 
   let trainButton = select('#train');
     trainButton.mousePressed(function(){
-      train(allInputs, 1000);
+      train(allInputs, 10);
     });
 
   let testButton = select('#guess');
