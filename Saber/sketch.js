@@ -109,10 +109,14 @@ function train(allInputs){
 
       //Taking labels from JSON
       let targets = [];
-      let labelXS = trainLabel.coordinates[i].xs/128;
-      let labelYS = trainLabel.coordinates[i].ys/128;
-      let labelXE = trainLabel.coordinates[i].xe/128;
-      let labelYE = trainLabel.coordinates[i].ye/128;
+      // let labelXS = trainLabel.coordinates[i].xs/128;
+      // let labelYS = trainLabel.coordinates[i].ys/128;
+      // let labelXE = trainLabel.coordinates[i].xe/128;
+      // let labelYE = trainLabel.coordinates[i].ye/128;
+      let labelXS = trainLabel.coordinates[i].xs;
+      let labelYS = trainLabel.coordinates[i].ys;
+      let labelXE = trainLabel.coordinates[i].xe;
+      let labelYE = trainLabel.coordinates[i].ye;
 
       targets.push(labelXS);
       targets.push(labelYS);
@@ -125,48 +129,48 @@ function train(allInputs){
 }
 
 function guess(displayIndex){
-      // updatePixels();
-      image(testImg[displayIndex], 0, 0);//Display the image
+    // updatePixels();
+  image(testImg[displayIndex], 0, 0);//Display the image
 
-      print("Test image index: "+displayIndex);
-      let d = pixelDensity();
-      let canvasImage = get();
-      canvasImage.resize(28, 28);
-      canvasImage.loadPixels();//Taking pixels on display
+  print("Test image index: "+displayIndex);
+  let d = pixelDensity();
+  let canvasImage = get();
+  canvasImage.resize(28, 28);
+  canvasImage.loadPixels();//Taking pixels on display
 
-      let inputs = [];
-      for(let i = 0; i < imagePixelSize2; i++){
-        let bright = canvasImage.pixels[i*4];//Only take braightness value
-        inputs[i] = bright / 255.0; //Normalizing
-      }
+  let inputs = [];
+  for(let i = 0; i < imagePixelSize2; i++){
+    let bright = canvasImage.pixels[i*4];//Only take braightness value
+    inputs[i] = bright / 255.0; //Normalizing
+  }
 
-      let guess = nn.feedforward(inputs);
-      let guessCoordinaites = [];
-      print(guess);
-      // print(inputs);
-      for(let i=0; i < guess.length; i++){
-        // print(guess[i]*128);
-        guessCoordinaites.push(guess[i]*128);
-      }
-      print(guessCoordinaites);
+  let guess = nn.feedforward(inputs);
+  let guessCoordinaites = [];
+  print(guess);
+  // print(inputs);
+  for(let i=0; i < guess.length; i++){
+    // print(guess[i]*128);
+    guessCoordinaites.push(guess[i]*128);
+  }
+  print(guessCoordinaites);
 
       //Taking labels from JSON
-      let coordXS = testLabel.coordinates[displayIndex].xs;
-      let coordYS = testLabel.coordinates[displayIndex].ys;
-      let coordXE = testLabel.coordinates[displayIndex].xe;
-      let coordYE = testLabel.coordinates[displayIndex].ye;
+  let coordXS = testLabel.coordinates[displayIndex].xs;
+  let coordYS = testLabel.coordinates[displayIndex].ys;
+  let coordXE = testLabel.coordinates[displayIndex].xe;
+  let coordYE = testLabel.coordinates[displayIndex].ye;
 
-      // print(coordXS);
-      // print(coordYS);
-      // print(coordXE);
-      // print(coordYE);
+  // print(coordXS);
+  // print(coordYS);
+  // print(coordXE);
+  // print(coordYE);
 
-      strokeWeight(4);
-      stroke(255, 0, 0);
-      line(coordXS, coordYS, coordXE, coordYE);
-      stroke(66, 200, 244);
-      line(guessCoordinaites[0], guessCoordinaites[1], guessCoordinaites[2], guessCoordinaites[3]);
-      // canvasImage.updatePixels();//Taking pixels on display
+  strokeWeight(4);
+  stroke(255, 0, 0);
+  line(coordXS, coordYS, coordXE, coordYE);
+  stroke(66, 200, 244);
+  line(guessCoordinaites[0], guessCoordinaites[1], guessCoordinaites[2], guessCoordinaites[3]);
+  // canvasImage.updatePixels();//Taking pixels on display
 }
 
 function setup(){
@@ -182,17 +186,18 @@ function setup(){
   // testDataCheck(6);//Number must be 0 - 9
 
   indexDisplay = createP();
-  epochDisplay = createP();
   indexDisplay.id("Display");
+  indexSlider = createSlider(0, testImageTotal-1, 0, 1);
+  indexSlider.id("Slider");
+
+  epochDisplay = createP();
   epochDisplay.id("Display");
+  epochSlider = createSlider(10, 100, 10, 10);
+  epochSlider.id("Slider");
+
   let displayId = document.getElementById("Display").innerHTML;
   // createDiv(displayId);
 
-
-  indexSlider = createSlider(0, testImageTotal-1, 0, 1);
-  indexSlider.id("Slider");
-  epochSlider = createSlider(10, 100, 10, 10);
-  epochSlider.id("Slider");
 
   let sliderId = document.getElementById("Slider").innerHTML;
   createDiv(sliderId);
@@ -208,6 +213,7 @@ function setup(){
       }
       fanfare.setVolume(0.2);
       fanfare.play();
+      console.log("Training compulite !!!");
     });
 
 
