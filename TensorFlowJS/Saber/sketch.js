@@ -4,23 +4,30 @@ let testImg = [];
 
 let trainLabel;
 let testLabel;
-const trainImageTotal = 80;
+let fanfare;
+const trainImageTotal = 2000;
 const testImageTotal = 10;
-let testImgIndex = 0;
 const imagePixelSize = 16384;
 const imagePixelSize2 = 784;
 
+let epochCounter = 0;
+let indexDisplay;
+let epochDisplay;
+let indexSlider;
+let epochSlider;
 
 function preload(){
   for(let i = 0; i < trainImageTotal; i++){
-    trainImg[i] = loadImage('trainingData/saber'+nf(i, 2)+'.png');
+    trainImg[i] = loadImage('trainingData/Saber'+nf(i, 4)+'.png');
   }
   trainLabel = loadJSON("trainLabel.json");
 
   for(let i = 0; i < testImageTotal; i++){
-    testImg[i] = loadImage('testData/saber'+nf(i, 2)+'.png');
+    testImg[i] = loadImage('testData/Saber'+nf(i, 4)+'.png');
   }
   testLabel = loadJSON("testLabel.json");
+
+  fanfare = loadSound("fanfare00.mp3");
 }
 
 function trainDataCheck(index){
@@ -94,11 +101,7 @@ function prepareInputs(){
 }
 
 //display image then loading every pixels
-function train(allInputs, epochNum){
-  let epoch = epochNum;
-  let epochCounter = 0;
-
-  for(let i = 0; i < epochNum; i++){
+function train(allInputs){
   shuffle(allInputs, true);
     for(let i = 0; i < allInputs.length; i++){
       let input = allInputs[i];
@@ -119,16 +122,13 @@ function train(allInputs, epochNum){
       nn.train(input, targets);
       // canvasImage.updatePixels();
     }
-    epochCounter++;
-    console.log("Epoch: "+epochCounter);
-  }
 }
 
-function guess(){
+function guess(displayIndex){
       // updatePixels();
-      image(testImg[testImgIndex], 0, 0);//Display the image
+      image(testImg[displayIndex], 0, 0);//Display the image
 
-      print("Test image index: "+testImgIndex);
+      print("Test image index: "+displayIndex);
       let d = pixelDensity();
       let canvasImage = get();
       canvasImage.resize(28, 28);
@@ -151,10 +151,10 @@ function guess(){
       print(guessCoordinaites);
 
       //Taking labels from JSON
-      let coordXS = testLabel.coordinates[testImgIndex].xs;
-      let coordYS = testLabel.coordinates[testImgIndex].ys;
-      let coordXE = testLabel.coordinates[testImgIndex].xe;
-      let coordYE = testLabel.coordinates[testImgIndex].ye;
+      let coordXS = testLabel.coordinates[displayIndex].xs;
+      let coordYS = testLabel.coordinates[displayIndex].ys;
+      let coordXE = testLabel.coordinates[displayIndex].xe;
+      let coordYE = testLabel.coordinates[displayIndex].ye;
 
       // print(coordXS);
       // print(coordYS);
@@ -162,8 +162,8 @@ function guess(){
       // print(coordYE);
 
       strokeWeight(4);
-      // stroke(255, 0, 0);
-      // line(coordXS, coordYS, coordXE, coordYE);
+      stroke(255, 0, 0);
+      line(coordXS, coordYS, coordXE, coordYE);
       stroke(66, 200, 244);
       line(guessCoordinaites[0], guessCoordinaites[1], guessCoordinaites[2], guessCoordinaites[3]);
       // canvasImage.updatePixels();//Taking pixels on display
@@ -171,30 +171,67 @@ function guess(){
 
 function setup(){
   createCanvas(128, 128);
-  // createCanvas(56, 56);
   background(0);
 
-  // nn = new NeuralNetwork(imagePixelSize, 128, 4);
+
   nn = new NeuralNetwork(imagePixelSize2, 128, 4);
 
-  // trainDataCheck(79);//Number must be 0 - 79
+  let allInputs = prepareInputs();
+
+  // trainDataCheck(300);//Number must be 0 - 1999
   // testDataCheck(6);//Number must be 0 - 9
 
-  let allInputs = prepareInputs();
-  // print(allInputs);
+  indexDisplay = createP();
+  epochDisplay = createP();
+  indexDisplay.id("Display");
+  epochDisplay.id("Display");
+  let displayId = document.getElementById("Display").innerHTML;
+  // createDiv(displayId);
 
-  let trainButton = select('#train');
+
+  indexSlider = createSlider(0, testImageTotal-1, 0, 1);
+  indexSlider.id("Slider");
+  epochSlider = createSlider(10, 100, 10, 10);
+  epochSlider.id("Slider");
+
+  let sliderId = document.getElementById("Slider").innerHTML;
+  createDiv(sliderId);
+
+  // let trainButton = select('#train');
+  let trainButton = createButton('train');
+    trainButton.id("Button");
     trainButton.mousePressed(function(){
-      train(allInputs, 10);
+      for(let i = 0; i < epochSlider.value(); i++){
+        train(allInputs);
+        epochCounter++;
+        console.log("Epoch: "+epochCounter);
+      }
+      fanfare.setVolume(0.2);
+      fanfare.play();
     });
 
-  let testButton = select('#guess');
-    testButton.mousePressed(function(){
-    guess();
+
+  // let testButton = select('#guess');
+  let testButton = createButton('guess');
+  testButton.id("Button");
+  testButton.mousePressed(function(){
+    guess(indexSlider.value());
   });
 
-  let clearButton = select('#clearAll');
+  // let clearButton = select('#clearAll');
+  let clearButton = createButton('clear');
+  clearButton.id("Button");
   clearButton.mousePressed(function(){
     background(0);
   });
+
+  let buttonId = document.getElementById("Button").innerHTML;
+  // createDiv(buttonId);
+
+}
+
+function draw(){
+  // display.html(indexSlider.value());
+  indexDisplay.html("Test image index: " + indexSlider.value());
+  epochDisplay.html("Epoch per click: " + epochSlider.value());
 }
