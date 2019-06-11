@@ -5,6 +5,7 @@ function pickColor(){
   r = floor(random(256));
   g = floor(random(256));
   b = floor(random(256));
+  background(r, g, b);
 }
 
 function setup(){
@@ -30,7 +31,6 @@ function setup(){
   let canvasId = document.getElementById("Canvas").innerHTML;
   createDiv(canvasId);
   pickColor();
-  background(r, g, b);
 
   //Other way of make selection
   // let dropdown = createSelect();
@@ -81,7 +81,8 @@ function sendData(){
       console.error("ooops, something went wrong.");
       console.error(err);
     }else{
-      console.error("Data saved successfully");
+      console.log("Data saved successfully");
+      pickColor();
     }
   }
 }

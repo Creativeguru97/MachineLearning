@@ -45,6 +45,6 @@ class Saber{
     //ellipse(bladeEnd.x, bladeEnd.y, 3, 3);
     //fill(0, 0, 255);
     //stroke(0, 0, 255);
-    //ellipse(gripStart.x + (bladeEnd.x - gripStart.x)/4, gripEndY, 3, 3);
+    //ellipse(bladeStart.x, bladeStart.y);
   }
 }

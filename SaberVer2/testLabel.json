@@ -1,0 +1,44 @@
+{
+"pixelIndices":[
+  {
+    "BladeEnd": 742,
+    "BladeStart": 7718
+  },
+  {
+    "BladeEnd": 15607,
+    "BladeStart": 13886
+  },
+  {
+    "BladeEnd": 3557,
+    "BladeStart": 10827
+  },
+  {
+    "BladeEnd": 4670,
+    "BladeStart": 6138
+  },
+  {
+    "BladeEnd": 11691,
+    "BladeStart": 4717
+  },
+  {
+    "BladeEnd": 11953,
+    "BladeStart": 10060
+  },
+  {
+    "BladeEnd": 14130,
+    "BladeStart": 4023
+  },
+  {
+    "BladeEnd": 15155,
+    "BladeStart": 11809
+  },
+  {
+    "BladeEnd": 2302,
+    "BladeStart": 8963
+  },
+  {
+    "BladeEnd": 14847,
+    "BladeStart": 10252
+  }
+]
+}
