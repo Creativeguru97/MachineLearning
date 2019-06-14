@@ -86,13 +86,14 @@ function prepareInputs(){
     image(trainImg[i], 0, 0);//Display the image
     let d = pixelDensity();
     let canvasImage = get();
-    canvasImage.resize(28, 28);
+    // canvasImage.resize(28, 28);
     canvasImage.loadPixels();//Taking pixels on display
 
     let input = [];
-    for(let i = 0; i < imagePixelSize2; i++){
+    for(let i = 0; i < imagePixelSize; i++){
       let bright = canvasImage.pixels[i*4];//Only take braightness value
       input[i] = bright / 255; //Normalizing
+      // input[i] = bright;
     }
 
     allInputs.push(input);
@@ -114,6 +115,11 @@ function train(allInputs){
       let labelXE = trainLabel.coordinates[i].xe/128;
       let labelYE = trainLabel.coordinates[i].ye/128;
 
+      // let labelXS = trainLabel.coordinates[i].xs;
+      // let labelYS = trainLabel.coordinates[i].ys;
+      // let labelXE = trainLabel.coordinates[i].xe;
+      // let labelYE = trainLabel.coordinates[i].ye;
+
       targets.push(labelXS);
       targets.push(labelYS);
       targets.push(labelXE);
@@ -131,13 +137,14 @@ function guess(displayIndex){
   print("Test image index: "+displayIndex);
   let d = pixelDensity();
   let canvasImage = get();
-  canvasImage.resize(28, 28);
+  // canvasImage.resize(28, 28);
   canvasImage.loadPixels();//Taking pixels on display
 
   let inputs = [];
-  for(let i = 0; i < imagePixelSize2; i++){
+  for(let i = 0; i < imagePixelSize; i++){
     let bright = canvasImage.pixels[i*4];//Only take braightness value
     inputs[i] = bright / 255.0; //Normalizing
+    // inputs[i] = bright;
   }
 
   let guess = nn.feedforward(inputs);
@@ -147,6 +154,7 @@ function guess(displayIndex){
   for(let i=0; i < guess.length; i++){
     // print(guess[i]*128);
     guessCoordinaites.push(guess[i]*128);
+    // guessCoordinaites.push(guess[i]);
   }
   print(guessCoordinaites);
 
@@ -174,7 +182,7 @@ function setup(){
   background(0);
 
 
-  nn = new NeuralNetwork(imagePixelSize2, 64, 4);
+  nn = new NeuralNetwork(imagePixelSize, 64, 4);
 
   let allInputs = prepareInputs();
   // console.log(allInputs[1614]);
@@ -189,7 +197,7 @@ function setup(){
 
   epochDisplay = createP();
   epochDisplay.id("Display");
-  epochSlider = createSlider(10, 100, 10, 10);
+  epochSlider = createSlider(1, 5, 1, 1);
   epochSlider.id("Slider");
 
   let displayId = document.getElementById("Display").innerHTML;

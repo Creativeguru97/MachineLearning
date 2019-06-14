@@ -1,44 +1,44 @@
 {
 "pixelIndices":[
   {
-    "BladeEnd": 742,
-    "BladeStart": 7718
+    "BladeEnd": 14870,
+    "BladeStart": 14430
   },
   {
-    "BladeEnd": 15607,
-    "BladeStart": 13886
+    "BladeEnd": 13815,
+    "BladeStart": 4579
   },
   {
-    "BladeEnd": 3557,
-    "BladeStart": 10827
+    "BladeEnd": 13289,
+    "BladeStart": 11820
   },
   {
-    "BladeEnd": 4670,
-    "BladeStart": 6138
+    "BladeEnd": 8214,
+    "BladeStart": 11837
   },
   {
-    "BladeEnd": 11691,
-    "BladeStart": 4717
+    "BladeEnd": 6130,
+    "BladeStart": 13129
   },
   {
-    "BladeEnd": 11953,
-    "BladeStart": 10060
+    "BladeEnd": 6290,
+    "BladeStart": 1867
   },
   {
-    "BladeEnd": 14130,
-    "BladeStart": 4023
+    "BladeEnd": 2582,
+    "BladeStart": 11067
   },
   {
-    "BladeEnd": 15155,
-    "BladeStart": 11809
+    "BladeEnd": 15404,
+    "BladeStart": 4944
   },
   {
-    "BladeEnd": 2302,
-    "BladeStart": 8963
+    "BladeEnd": 14827,
+    "BladeStart": 6389
   },
   {
-    "BladeEnd": 14847,
-    "BladeStart": 10252
+    "BladeEnd": 15830,
+    "BladeStart": 16152
   }
 ]
 }

@@ -15,11 +15,12 @@ void draw(){
   
   
   float pixelIndex = coord.x + coord.y * width;
+  text(pixelIndex, 20, 70);
   
   float x2 = pixelIndex % width;
-  float y2 = pixelIndex / width;
-  text(x2, 20, 70);
-  text(y2, 20, 90);
+  float y2 = (pixelIndex - x2) / width;
+  text(x2, 20, 100);
+  text(y2, 20, 120);
   fill(255);
   ellipse(x2, y2, 10, 10);  
 }

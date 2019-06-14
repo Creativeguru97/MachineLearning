@@ -23,7 +23,7 @@ void draw(){
 void keyPressed(){
   if(key == 'e'){
     excuteImage.Exporting = !excuteImage.Exporting;
-  }else if(key == 'j' && excuteImage.frameIndex >= 2000){
+  }else if(key == 'j' && excuteImage.frameIndex >= EndNum){
     excuteJSON.exportJSON();
   }
 }

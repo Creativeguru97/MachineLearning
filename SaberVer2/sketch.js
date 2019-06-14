@@ -47,38 +47,33 @@ function trainDataCheck(index){
   let bladeEndIndex = trainLabel.pixelIndices[trainImageIndex].BladeEnd;
 
 
-  let bladeStartX = bladeStartIndex % 128;
-  let bladeStartY = bladeStartIndex / width;
-  print(bladeStartX);
+  let bladeStartX = bladeStartIndex % width;
+  let bladeStartY = (bladeStartIndex - bladeStartX) / width;
 
   let bladeEndX = bladeEndIndex % width;
-  let bladeEndY = bladeEndIndex / width;
+  let bladeEndY = (bladeEndIndex - bladeEndX) / width;
 
   strokeWeight(4);
   stroke(255, 0, 0);
   line(bladeStartX, bladeStartY, bladeEndX, bladeEndY);
-  noStroke();
-  fill(0, 255, 0);
-  ellipse(bladeStartX, bladeStartY, 5, 5);
 }
 
 function testDataCheck(index){
   let testImageIndex = index; //must be 0 - 9
   image(testImg[testImageIndex], 0, 0);
 
-  let coordXS = testLabel.coordinates[testImageIndex].xs;
-  let coordYS = testLabel.coordinates[testImageIndex].ys;
-  let coordXE = testLabel.coordinates[testImageIndex].xe;
-  let coordYE = testLabel.coordinates[testImageIndex].ye;
+  let bladeStartIndex = testLabel.pixelIndices[testImageIndex].BladeStart;
+  let bladeEndIndex = testLabel.pixelIndices[testImageIndex].BladeEnd;
 
-  print(coordXS);
-  print(coordYS);
-  print(coordXE);
-  print(coordYE);
+  let bladeStartX = bladeStartIndex % width;
+  let bladeStartY = (bladeStartIndex - bladeStartX) / width;
+
+  let bladeEndX = bladeEndIndex % width;
+  let bladeEndY = (bladeEndIndex - bladeEndX) / width;
 
   strokeWeight(4);
   stroke(255, 0, 0);
-  line(coordXS, coordYS, coordXE, coordYE);
+  line(bladeStartX, bladeStartY, bladeEndX, bladeEndY);
 }
 
 function prepareInputs(){
@@ -111,21 +106,13 @@ function train(allInputs){
       // print(input);
 
       //Taking labels from JSON
+      let bladeStartIndex = trainLabel.pixelIndices[i].BladeStart/(width * width);
+      let bladeEndIndex = trainLabel.pixelIndices[i].BladeEnd/(width * width);
+
+
       let targets = [];
-      let labelXS = trainLabel.coordinates[i].xs/128;
-      let labelYS = trainLabel.coordinates[i].ys/128;
-      let labelXE = trainLabel.coordinates[i].xe/128;
-      let labelYE = trainLabel.coordinates[i].ye/128;
-
-      // let labelXS = trainLabel.coordinates[i].xs;
-      // let labelYS = trainLabel.coordinates[i].ys;
-      // let labelXE = trainLabel.coordinates[i].xe;
-      // let labelYE = trainLabel.coordinates[i].ye;
-
-      targets.push(labelXS);
-      targets.push(labelYS);
-      targets.push(labelXE);
-      targets.push(labelYE);
+      targets.push(bladeStartIndex);
+      targets.push(bladeEndIndex);
 
       nn.train(input, targets);
       // canvasImage.updatePixels();
@@ -152,31 +139,37 @@ function guess(displayIndex){
   let guess = nn.feedforward(inputs);
   let guessCoordinaites = [];
   print(guess);
-  // print(inputs);
-  for(let i=0; i < guess.length; i++){
-    // print(guess[i]*128);
-    guessCoordinaites.push(guess[i]*128);
-    // guessCoordinaites.push(guess[i]);
-  }
-  print(guessCoordinaites);
 
-      //Taking labels from JSON
-  let coordXS = testLabel.coordinates[displayIndex].xs;
-  let coordYS = testLabel.coordinates[displayIndex].ys;
-  let coordXE = testLabel.coordinates[displayIndex].xe;
-  let coordYE = testLabel.coordinates[displayIndex].ye;
+  let guessStartIndex = guess[0] * (width * width);
+  let guessEndIndex = guess[1] * (width * width);
 
-  // print(coordXS);
-  // print(coordYS);
-  // print(coordXE);
-  // print(coordYE);
+  let guessStartX = guessStartIndex % width;
+  let guessStartY = (guessStartIndex - guessStartX) / width;
+
+  let guessEndX = guessEndIndex % width;
+  let guessEndY = (guessEndIndex - guessEndX) / width;
+
+  print(guessStartX);
+  print(guessStartY);
+  print(guessEndX);
+  print(guessEndY);
+
+
+  //Taking labels from JSON
+  let bladeStartIndex = testLabel.pixelIndices[displayIndex].BladeStart;
+  let bladeEndIndex = testLabel.pixelIndices[displayIndex].BladeEnd;
+
+  let bladeStartX = bladeStartIndex % width;
+  let bladeStartY = (bladeStartIndex - bladeStartX) / width;
+
+  let bladeEndX = bladeEndIndex % width;
+  let bladeEndY = (bladeEndIndex - bladeEndX) / width;
 
   strokeWeight(4);
   stroke(255, 0, 0);
-  line(coordXS, coordYS, coordXE, coordYE);
+  line(bladeStartX, bladeStartY, bladeEndX, bladeEndY);
   stroke(66, 200, 244);
-  line(guessCoordinaites[0], guessCoordinaites[1], guessCoordinaites[2], guessCoordinaites[3]);
-  // canvasImage.updatePixels();//Taking pixels on display
+  line(guessStartX, guessStartY, guessEndX, guessEndY);
 }
 
 function setup(){
@@ -184,13 +177,13 @@ function setup(){
   background(0);
 
 
-  nn = new NeuralNetwork(imagePixelSize, 64, 4);
+  nn = new NeuralNetwork(imagePixelSize, 64, 2);
 
-  // let allInputs = prepareInputs();
+  let allInputs = prepareInputs();
   // console.log(allInputs[1614]);
 
-  trainDataCheck(0);//Number must be 0 - 1999
-  // testDataCheck(6);//Number must be 0 - 9
+  // trainDataCheck(578);//Number must be 0 - 1999
+  testDataCheck(0);//Number must be 0 - 9
 
   indexDisplay = createP();
   indexDisplay.id("Display");

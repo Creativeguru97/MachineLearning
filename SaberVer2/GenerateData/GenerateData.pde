@@ -1,7 +1,7 @@
 Saber saber;
 imageExport excuteImage;
 JSON excuteJSON;
-int EndNum = 1;
+int EndNum = 10;
 
 void setup(){
   size(128, 128);

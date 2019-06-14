@@ -12,18 +12,27 @@ class imageExport{
       saveFrame("trainingData/Saber"+nf(frameIndex, 4)+".png");
       frameIndex++;
       
-      float BladeStartIndex = saber.bladeStart.x + saber.bladeStart.y * width;
-      println(BladeStartIndex);
-      println(saber.bladeStart.x);
-      println(saber.bladeStart.y);
+      float BladeStartIndex = int(saber.bladeStart.x) + int(saber.bladeStart.y) * width;
+      float BladeEndIndex = int(saber.bladeEnd.x) + int(saber.bladeEnd.y) * 128;
+
+    //DEBUG
+      //print("index "+ BladeStartIndex);
+      //println("   index "+ BladeEndIndex);
       
-      float x = BladeStartIndex % width;
-      float y = BladeStartIndex / width;
-      println(x);
-      println(y);
+      //print("x "+saber.bladeStart.x);
+      //println("   x "+saber.bladeEnd.x);
+      //print("y "+saber.bladeStart.y);
+      //println("   y "+saber.bladeEnd.y);
       
-      float BladeEndIndex = saber.bladeEnd.x + saber.bladeEnd.y * 128;
-      
+      //float xs = BladeStartIndex % width;
+      //float ys = (BladeStartIndex - xs) / width;
+      //float xe = BladeEndIndex % width;
+      //float ye = (BladeEndIndex - xe) / width;
+      //print("xs "+xs);
+      //println("   xe "+xe);
+      //print("ys "+ys);
+      //println("   ye "+ye);
+            
     
       excuteJSON.BladeStart = append(excuteJSON.BladeStart, BladeStartIndex);
       excuteJSON.BladeEnd = append(excuteJSON.BladeEnd, BladeEndIndex);
