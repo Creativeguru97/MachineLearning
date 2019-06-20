@@ -112,34 +112,36 @@ function prepareInputs(category){
     }
     allInputs.push(input);
   }
+  shuffle(allInputs, true);
   return allInputs;
 }
 
 //display image then loading every pixels
-function train(allInputs, target){
+function train(allInputs, label){
   shuffle(allInputs, true);
     for(let i = 0; i < allInputs.length; i++){
       let input = allInputs[i];
 
-      let targets = [];
-      targets.push(target);
-
+      let targets = [0, 0];
+      targets[label] = 1;
       nn.train(input, targets);
       // canvasImage.updatePixels();
     }
 }
 
-function testAll(allInputs, target){
+function testAll(allInputs, label){
   shuffle(allInputs, true);
   let correct = 0;
 
   for(let i = 0; i < allInputs.length; i++){
     let input = allInputs[i];
-    let targets = [];
-    targets.push(target);
+    let targets = [0, 0];
+    targets[label] = 1;
     let guess = nn.feedforward(input);
     print(guess);
-    if(guess === target){
+    let m = max(guess);
+    let classification = guess.indexOf(m);
+    if(classification === label){
       correct++;
     }
   }
@@ -199,7 +201,7 @@ function setup(){
   background(0);
 
 
-  nn = new NeuralNetwork(imageDataSize, 64, 1);
+  nn = new NeuralNetwork(imageDataSize, 64, 2);
 
   let inputTrH = prepareInputs(trainImgH);
   let inputTrNH = prepareInputs(trainImgNH);
@@ -234,8 +236,8 @@ function setup(){
       for(let i = 0; i < epochSlider.value(); i++){
         train(inputTrH, Hotdog);
         train(inputTrNH, NotHotdog);
-        train(inputTeH, Hotdog);
-        train(inputTeNH, NotHotdog);
+        // train(inputTeH, Hotdog);
+        // train(inputTeNH, NotHotdog);
         epochCounter++;
         console.log("Epoch: "+epochCounter);
       }
@@ -249,8 +251,8 @@ function setup(){
   let testButton = createButton('test');
   testButton.id("Button");
   testButton.mousePressed(function(){
-    let percentage1 = testAll(inputTrH, Hotdog);
-    let percentage2 = testAll(inputTrNH, NotHotdog);
+    // let percentage1 = testAll(inputTrH, Hotdog);
+    // let percentage2 = testAll(inputTrNH, NotHotdog);
     let percentage3 = testAll(inputTeH, Hotdog);
     let percentage4 = testAll(inputTeNH, NotHotdog);
     // print(percentage1);
