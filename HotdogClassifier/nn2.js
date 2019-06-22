@@ -7,6 +7,26 @@ function derivativeSigmoid(y){
   return y * (1 - y);
 }
 
+function ReLU(x){
+  if(x >= 0 && x <= 128){
+    return Math.max(0, x);
+  }else if(x < 0){
+    return 0.001*x;
+  }else{
+    return 1;
+  }
+}
+
+function derivativeReLU(y){
+  if(y >= 0){
+    return 1;
+  }else if(y < 0){
+    return 0.001;
+  }
+}
+
+
+
 
 class NeuralNetwork{
 
@@ -24,27 +44,25 @@ class NeuralNetwork{
     this.bias_o = new Matrix(this.output_nodes, 1);
     this.bias_h.randomize();
     this.bias_o.randomize();
-    this.learning_rate;
-  }
-
-  learningRate(val){
-    this.learning_rate = val;
+    this.learning_rate = 0.2;
   }
 
   feedforward(input_array){
     //Generating the Hidden outputs !!!
     let inputs = Matrix.fromArray(input_array);//Make input matrix from array
-    // console.log(inputs);
     let hidden = Matrix.multiply(this.weights_IH, inputs);//I * H
+    //print(hidden);
     hidden.add(this.bias_h);//I * H + b (= h)
     //Activation function!
     hidden.map(sigmoid);
+    // hidden.map(ReLU);
 
     //Generating the Output's outputs !!!
     let output = Matrix.multiply(this.weights_HO, hidden);//h * O
     output.add(this.bias_o);//h * O + b2
     //Activation function!
     output.map(sigmoid);
+    // output.map(ReLU);
     //Sending it back to the caller
     return output.toArray();
   }
@@ -55,20 +73,31 @@ class NeuralNetwork{
     //Generating the Hidden outputs !!!
     let inputs = Matrix.fromArray(input_array);//Make input matrix from array
     let hidden = Matrix.multiply(this.weights_IH, inputs);//I * H
+    // print(inputs);
+    // print(this.weights_IH);
+    // print(hidden);
+
     hidden.add(this.bias_h);//I * H + b (= h)
+    // print(hidden);
     hidden.map(sigmoid);
+    // hidden.map(ReLU);
 
     //Generating the Output's outputs !!!
     let outputs = Matrix.multiply(this.weights_HO, hidden);//h * O
     outputs.add(this.bias_o);//h * O + b2
     outputs.map(sigmoid);
+    // outputs.map(ReLU);
+    // console.log(outputs);
 //----------------------------------------------------------
     //Backpropagation
     let targets = Matrix.fromArray(target_array);
+    // console.log(targets);
     //Calculate the console.error
     let output_errors = Matrix.subtract(targets, outputs);//Error = targets(answer) - outputs
+    // console.log(output_errors);
     //Gradient Desent Calculation
     let gradients = Matrix.map(outputs, derivativeSigmoid);// let gradient = outputs * (1 - outputs);
+    // let gradients = Matrix.map(outputs, derivativeReLU);
     gradients.multiply(output_errors);
     gradients.multiply(this.learning_rate);
 
@@ -84,6 +113,7 @@ class NeuralNetwork{
     let hidden_errors = Matrix.multiply(weights_HO_tr, output_errors);
     //Calculate hidden gradient descent
     let hidden_gradients = Matrix.map(hidden, derivativeSigmoid);
+    // let hidden_gradients = Matrix.map(hidden, derivativeReLU);
     hidden_gradients.multiply(hidden_errors);
     hidden_gradients.multiply(this.learning_rate);
 

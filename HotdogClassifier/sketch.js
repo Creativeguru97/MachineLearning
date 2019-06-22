@@ -87,18 +87,20 @@ function testDataCheck(index){
   line(coordXS, coordYS, coordXE, coordYE);
 }
 
-function prepareInputs(category){
-  let allInputs = [];
+function prepareInputs(category, data, label){
+  // let allInputs = [];
+  category.inputArray = [];
 
   //For all image
-  for(let i = 0; i < category.length; i++){
-    image(category[i], 0, 0, 128, 128);//Display the image
+  for(let i = 0; i < data.length; i++){
+    image(data[i], 0, 0, 128, 128);//Display the image
     let d = pixelDensity();
     let canvasImage = get();
     // canvasImage.resize(28, 28);
     canvasImage.loadPixels();//Taking pixels on display
 
     let input = [];
+    input.label = label;
     //For each indivisual image
     for(let i = 0; i < imagePixelLength; i++){
       let r = canvasImage.pixels[i]/255;
@@ -110,43 +112,51 @@ function prepareInputs(category){
       input.push(b);
       input.push(bright);
     }
-    allInputs.push(input);
+    category.inputArray.push(input);
   }
-  shuffle(allInputs, true);
-  return allInputs;
+  // shuffle(allInputs, true);
+  return category.inputArray;
 }
 
 //display image then loading every pixels
-function train(allInputs, label){
-  shuffle(allInputs, true);
-    for(let i = 0; i < allInputs.length; i++){
-      let input = allInputs[i];
+function train(trainingData){
+  shuffle(trainingData, true);
+  // print(trainingData.length);
+    for(let i = 0; i < trainingData.length; i++){
+      let input = trainingData[i];
 
+      let label = trainingData[i].label;
       let targets = [0, 0];
       targets[label] = 1;
+      // print(targets);
       nn.train(input, targets);
       // canvasImage.updatePixels();
     }
 }
 
-function testAll(allInputs, label){
-  shuffle(allInputs, true);
+function testAll(testingData){
+  shuffle(testingData, true);
+  print(testingData.length);
   let correct = 0;
 
-  for(let i = 0; i < allInputs.length; i++){
-    let input = allInputs[i];
+  for(let i = 0; i < testingData.length; i++){
+    let input = testingData[i];
+    print(input);
+    let label = testingData[i].label;
     let targets = [0, 0];
     targets[label] = 1;
+    print(targets);
     let guess = nn.feedforward(input);
     print(guess);
+    print("-------------");
     let m = max(guess);
     let classification = guess.indexOf(m);
     if(classification === label){
       correct++;
     }
   }
-  let percent = correct / allInputs.length * 100;
-  return percent;
+  let percentage = correct / testingData.length * 100;
+  return percentage;
 }
 
 // function guess(displayIndex){
@@ -201,13 +211,24 @@ function setup(){
   background(0);
 
 
-  nn = new NeuralNetwork(imageDataSize, 64, 2);
+  nn = new NeuralNetwork(imageDataSize, 256, 2);
+  nn.learningRate(0.1);
 
-  let inputTrH = prepareInputs(trainImgH);
-  let inputTrNH = prepareInputs(trainImgNH);
-  let inputTeH = prepareInputs(testImgH);
-  let inputTeNH = prepareInputs(testImgNH);
-  console.log(inputTrH);
+  let inputTrH = prepareInputs(hotdogs, trainImgH, Hotdog);
+  let inputTrNH = prepareInputs(notHotdogs, trainImgNH, NotHotdog);
+  let inputTeH = prepareInputs(hotdogs, testImgH, Hotdog);
+  let inputTeNH = prepareInputs(notHotdogs, testImgNH, NotHotdog);
+  // console.log(inputTrH);
+
+  let trainingData = [];
+  trainingData = trainingData.concat(inputTrH);
+  trainingData = trainingData.concat(inputTrNH);
+  // print(trainingData);
+
+  let testingData = [];
+  testingData = testingData.concat(inputTeH);
+  testingData = testingData.concat(inputTeNH);
+  print(testingData);
 
   // trainDataCheck(300);//Number must be 0 - 1999
   // testDataCheck(6);//Number must be 0 - 9
@@ -234,10 +255,9 @@ function setup(){
     trainButton.id("Button");
     trainButton.mousePressed(function(){
       for(let i = 0; i < epochSlider.value(); i++){
-        train(inputTrH, Hotdog);
-        train(inputTrNH, NotHotdog);
-        // train(inputTeH, Hotdog);
-        // train(inputTeNH, NotHotdog);
+        // train(inputTrH, Hotdog);
+        // train(inputTrNH, NotHotdog);
+        train(trainingData);
         epochCounter++;
         console.log("Epoch: "+epochCounter);
       }
@@ -253,12 +273,8 @@ function setup(){
   testButton.mousePressed(function(){
     // let percentage1 = testAll(inputTrH, Hotdog);
     // let percentage2 = testAll(inputTrNH, NotHotdog);
-    let percentage3 = testAll(inputTeH, Hotdog);
-    let percentage4 = testAll(inputTeNH, NotHotdog);
-    // print(percentage1);
-    // print(percentage2);
-    // print(percentage3);
-    // print(percentage4);
+    let percentage = testAll(testingData);
+    print(percentage);
   });
 
   // let guessButton = createButton('guess');
