@@ -57,7 +57,19 @@ def Perceptron(x1, x2, logicType):
 # print(Perceptron(1,0, "nAND")) #Output 1
 # print(Perceptron(1,1, "nAND")) #Output 0
 
-print(Perceptron(0,0, "OR")) #Output 0
-print(Perceptron(0,1, "OR")) #Output 1
-print(Perceptron(1,0, "OR")) #Output 1
-print(Perceptron(1,1, "OR")) #Output 1
+# print(Perceptron(0,0, "OR")) #Output 0
+# print(Perceptron(0,1, "OR")) #Output 1
+# print(Perceptron(1,0, "OR")) #Output 1
+# print(Perceptron(1,1, "OR")) #Output 1
+
+
+def XOR(x1, x2):
+    s1 = Perceptron(x1, x2, "nAND")
+    s2 = Perceptron(x1, x2, "OR")
+    y = Perceptron(s1, s2, "AND")
+    return y
+
+print(XOR(0, 0))#Output 0
+print(XOR(1, 0))#Output 1
+print(XOR(0, 1))#Output 1
+print(XOR(1, 1))#Output 0
