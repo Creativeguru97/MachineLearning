@@ -12,3 +12,6 @@ def softmax(a):
     c = np.max(a)#Take the max of the a: np.array
     y = np.exp(a - c) / np.sum(np.exp(a - c))#Ninus each element by max of the them
     return y
+
+def mean_squared_error(y, t):
+    return 0.5 * np.sum((y - t) ** 2)
