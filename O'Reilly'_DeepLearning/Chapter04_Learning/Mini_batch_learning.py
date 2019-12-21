@@ -1,5 +1,5 @@
 import sys, os
-sys.path.append(os.pardir) #Import parent directory
+sys.path.append(os.pardir) #Import parent directory to use functions in "common" directory
 import numpy as np
 import pickle
 from dataset.mnist import load_mnist

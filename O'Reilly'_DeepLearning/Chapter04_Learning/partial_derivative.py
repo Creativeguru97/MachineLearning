@@ -34,21 +34,16 @@ def numerical_gradient(f, x):
         #At second, against x[1]
         for i in range(x.size):
             tmp_val = x[i]
-            # print("x[i]: " + str(x[i]))
 
             #Calculate f(x+h)
             x[i] = tmp_val + h
             fxh1 = f(x)
-            # print("fxh1: " + str(fxh1))
 
             #Calculate f(x-h)
             x[i] = tmp_val - h
             fxh2 = f(x)
-            # print("fxh2: " + str(fxh2))
 
             grad[i] = (fxh1 - fxh2) / (2*h)#Calculate actual derivative at here!
-            # print("grad[i]: "  +str(grad[i]))
-            # print("------------------")
             x[i] = tmp_val #Revert the x value to the original
         return grad
 
