@@ -10,6 +10,16 @@ def numerical_gradient(f, x):
     h = 1e-4 # 0.0001
     grad = np.zeros_like(x)
 
+    # np.nditer: Efficient multi-dimensional iterator object to iterate over arrays.
+    # Parameters:
+        # op: The array(s) to iterate over. This time we use x for that.
+
+        # flags: Flags to control the behavior of the iterator.
+            # multi_index causes a multi-index, or a tuple of indices
+                                    # with one per iteration dimension, to be tracked.
+
+        # op_flags: This is a list of flags for each operand.
+                        # At minimum, one of readonly, readwrite, or writeonly must be specified.
     it = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
     while not it.finished:
         idx = it.multi_index
@@ -21,7 +31,7 @@ def numerical_gradient(f, x):
         fxh2 = f(x) # f(x-h)
         grad[idx] = (fxh1 - fxh2) / (2*h)
 
-        x[idx] = tmp_val # 値を元に戻す
+        x[idx] = tmp_val #Revert the x value to the original
         it.iternext()
 
     return grad
@@ -44,7 +54,7 @@ def gradient_descent(f, init_x, lr = 0.01, iteration = 100):
 
 class simpleNet:
     def __init__(this):
-        this.W = np.random.randn(2, 3)#Generate 2*3 weight values using Gaussian distribution.
+        this.W = np.random.randn(2, 3)#Generate 2*3 random weight values using Gaussian distribution.
 
     def predict(this, x):#x: inputs
         return np.dot(x, this.W)
@@ -54,7 +64,6 @@ class simpleNet:
         y = softmax(z)#Imported function from common directory
         loss = cross_entropy_error(y, t)
         return loss
-
 
 
 net = simpleNet()
