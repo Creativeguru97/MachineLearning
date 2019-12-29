@@ -16,6 +16,7 @@ print(t_train.shape)#(60000, 10)
 train_size = x_train.shape[0]
 batch_size = 10
 #Choose 10 index number of image from 0 to train_size(In this case, 60000)
+# np.random.choice(data size, sample size)
 batch_mask = np.random.choice(train_size, batch_size)
 
 

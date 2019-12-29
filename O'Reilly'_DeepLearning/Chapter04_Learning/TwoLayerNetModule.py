@@ -71,7 +71,7 @@ class TwoLayerNet:
         t = np.argmax(t, axis = 1)
 
                                     #Number of images
-        accuracy = np.sum(y == 1) / float(x.shape[0])
+        accuracy = np.sum(y == t) / float(x.shape[0])
         return accuracy
 
     def numerical_gradient(this, x, t):
@@ -84,19 +84,19 @@ class TwoLayerNet:
         grads["b2"] = numerical_gradient(loss_W, this.parameters["b2"])#Really? Caldulate gradient of bias too?
         return grads
 
-
-net = TwoLayerNet(input_size = 784, hidden_size = 100, output_size = 10)
-#Checking the parameters
-print(net.parameters["W1"].shape) #(784, 100)
-print(net.parameters["b1"].shape) #(100,)
-print(net.parameters["W2"].shape) #(100, 10)
-print(net.parameters["b2"].shape) #(10,)
-
-x = np.random.rand(100, 784)#Just random value for testing
-t = np.random.rand(100, 10)#Just random value for testing
-
-grads = net.numerical_gradient(x, t)#Caldulate gradient
-print(grads["W1"].shape) #(784, 100)
-print(grads["b1"].shape) #(100,)
-print(grads["W2"].shape) #(100, 10)
-print(grads["b2"].shape) #(10,)
+#
+# net = TwoLayerNet(input_size = 784, hidden_size = 100, output_size = 10)
+# #Checking the parameters
+# print(net.parameters["W1"].shape) #(784, 100)
+# print(net.parameters["b1"].shape) #(100,)
+# print(net.parameters["W2"].shape) #(100, 10)
+# print(net.parameters["b2"].shape) #(10,)
+#
+# x = np.random.rand(100, 784)#Just random value for testing
+# t = np.random.rand(100, 10)#Just random value for testing
+#
+# grads = net.numerical_gradient(x, t)#Caldulate gradient
+# print(grads["W1"].shape) #(784, 100)
+# print(grads["b1"].shape) #(100,)
+# print(grads["W2"].shape) #(100, 10)
+# print(grads["b2"].shape) #(10,)
