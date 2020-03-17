@@ -1,0 +1,15 @@
+#video{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index:-1;
+  border: 3px #fff solid;
+	border-radius: 10px;
+}
+
+#canvas{
+  position: absolute;
+  top: 10px;
+  left: 200px;
+  z-index:1;
+}
