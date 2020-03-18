@@ -2,14 +2,14 @@
 <head>
   <meta charset="UTF-8">
   <title>linear regression with tensorflow</title>
-  <!-- This tensorflow downloading must be before than loading sketch.js -->
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
 
-  <!-- <script language="javascript" type="text/javascript" src="libraries/p5.js"></script>
+  <script language="javascript" type="text/javascript" src="libraries/p5.js"></script>
   <script language="javascript" src="libraries/p5.dom.js"></script>
-  <script language="javascript" src="libraries/p5.sound.js"></script> -->
-  <!-- <script src="sketch.js"></script> -->
+  <script language="javascript" src="libraries/p5.sound.js"></script>
+  <script defer language="javascript" type="text/javascript" src="sketch.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
@@ -19,47 +19,5 @@
   <!-- <img id='baNgười' src='/data/baNgười.jpg '/> -->
   <img id='bốnNgười' src='/data/bốnNgười.jpg '/>
 </body>
-
-<script>
- let flipHorizontal = false;
-
- // let imageElement = document.getElementById('Bơ');
- // let imageElement = document.getElementById('HaiNgười');
- // let imageElement = document.getElementById('baNgười');
- // let imageElement = document.getElementById('Bơ');
- let imageElement = document.getElementById('bốnNgười');
-
-// ----- Single pose estimation -----
- // posenet.load({
- //   architecture: 'MobileNetV1',
- //   outputStride: 16,
- //   // inputResolution: { width: 640, height: 480 },
- //   multiplier: 0.5
- // }).then(function(net) {
- //   const pose = net.estimateSinglePose(imageElement, {
- //     flipHorizontal: false,
- //     imageScaleFactor:0.5
- //   });
- //   return pose;
- // }).then(function(pose){
- //   console.log(pose);
- // })
-
-// ----- Multi-pose estimation -----
- posenet.load({
-   architecture: 'MobileNetV1',
-   outputStride: 16,
-   // inputResolution: { width: 640, height: 480 },
-   multiplier: 1.0
- }).then(function(net){
-      return net.estimateMultiplePoses(imageElement, {
-        flipHorizontal: false,
-        maxDetections: 5,
-        scoreThreshold: 0.5,
-        nmsRadius: 20})
-    }).then(function(poses){
-      console.log(poses);
-    })
-</script>
 
 </html>
