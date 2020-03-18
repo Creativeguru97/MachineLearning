@@ -1,8 +1,37 @@
+/*
+  Tutorials to implement image feeding:
+    Tutorial0: https://github.com/tensorflow/tfjs-models/tree/master/posenet
+    Tutorial1: https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5
+
+  Resource that help me a lot to implement video feeding:
+    https://github.com/hpssjellis/beginner-tensorflowjs-examples-in-javascript/blob/master/tfjsv1/tfjs01-posenet-webcam.html
+*/
+
+//I think this is the simplest PoseNet Video feeding Implementation ever.
+
+let net;
+let poses = [];//Must be array, because estimateMultiplePoses() returns array
 
 let nosePositionX;
 let nosePositionY;
 
-navigator.mediaDevices.getUserMedia({video:{width: 320, height: 240 }})
+const widthValue = 320;
+const heightValue = 240;
+
+
+async function loadPoseNet(){
+  net = await posenet.load({
+  architecture: 'MobileNetV1',
+  outputStride: 16,
+  inputResolution: { width: widthValue, height: heightValue },
+  multiplier: 0.5
+  })
+}
+
+loadPoseNet();
+
+
+navigator.mediaDevices.getUserMedia({video:{width: widthValue, height: heightValue }})
 .then(mediaStream => {
   var video = document.querySelector('video');
   video.srcObject = mediaStream;
@@ -19,29 +48,22 @@ let element = document.getElementById('video');
 element.addEventListener("play", () => {
 
   setInterval(async () => {
-      //I have to separate load model part from estimate part to prevent accumulatiing allocation 
-      posenet.load({
-      architecture: 'MobileNetV1',
-      outputStride: 16,
-      inputResolution: { width: 320, height: 240 },
-      multiplier: 0.5
-      })
-      .then(function(net){
-        return net.estimateMultiplePoses(element, {
-          flipHorizontal: false,
-          maxDetections: 2,
-          scoreThreshold: 0.6,
-          nmsRadius: 20})
-      }).then(function(poses){
-        nosePositionX = poses[0].keypoints[0].position.x;
-        nosePositionY = poses[0].keypoints[0].position.y;
+  poses = await net.estimateMultiplePoses(element, {
+    flipHorizontal: false,
+    maxDetections: 2,
+    scoreThreshold: 0.6,
+    nmsRadius: 20
+  })
 
-        console.log("----------");
-        console.log("x: "+nosePositionX);
-        console.log("y: "+nosePositionY);
-        console.log("----------");
-      })
-  }, 500)
+  nosePositionX = poses[0].keypoints[0].position.x;
+  nosePositionY = poses[0].keypoints[0].position.y;
+
+  // console.log("----------");
+  // console.log("x: "+nosePositionX);
+  // console.log("y: "+nosePositionY);
+  // console.log("----------");
+
+}, 50)
 
 })
 
@@ -52,7 +74,8 @@ let canvas;
 
 canvas = p => {
   p.setup = () => {
-    p.createCanvas(320, 240);
+    p.createCanvas(widthValue, heightValue);
+    // p.clear();
   }
 
   p.draw = () => {
@@ -60,6 +83,8 @@ canvas = p => {
     if(nosePositionX != undefined && nosePositionY != undefined){
       p.ellipse(nosePositionX, nosePositionY, 20, 20);
     }
+
+    console.log(p.frameRate());
   }
 }
 
