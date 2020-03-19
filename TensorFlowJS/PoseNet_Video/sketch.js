@@ -58,6 +58,8 @@ element.addEventListener("play", () => {
   nosePositionX = poses[0].keypoints[0].position.x;
   nosePositionY = poses[0].keypoints[0].position.y;
 
+  console.log(poses);
+
   // console.log("----------");
   // console.log("x: "+nosePositionX);
   // console.log("y: "+nosePositionY);
@@ -84,7 +86,7 @@ canvas = p => {
       p.ellipse(nosePositionX, nosePositionY, 20, 20);
     }
 
-    console.log(p.frameRate());
+    // console.log(p.frameRate());
   }
 }
 
