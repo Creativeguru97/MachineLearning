@@ -1,7 +1,7 @@
-#bốnNgười{
+#image{
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 0px;
+  left: 0px;
   z-index:-1;
   border: 3px #fff solid;
 	border-radius: 10px;
@@ -10,6 +10,6 @@
 #canvas{
   position: absolute;
   top: 10px;
-  left: 200px;
+  left: 10px;
   z-index:1;
 }

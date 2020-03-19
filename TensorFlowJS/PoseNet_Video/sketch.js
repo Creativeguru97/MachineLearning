@@ -15,15 +15,15 @@ let poses = [];//Must be array, because estimateMultiplePoses() returns array
 let nosePositionX;
 let nosePositionY;
 
-const widthValue = 320;
-const heightValue = 240;
+const widthValue = 640;
+const heightValue = 480;
 
 
 async function loadPoseNet(){
   net = await posenet.load({
   architecture: 'MobileNetV1',
   outputStride: 16,
-  inputResolution: { width: widthValue, height: heightValue },
+  inputResolution: { width: widthValue/2, height: heightValue/2 },
   multiplier: 0.5
   })
 }

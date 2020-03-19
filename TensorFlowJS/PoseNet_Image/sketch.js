@@ -3,22 +3,13 @@
   Tutorial1: https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5
 */
 let flipHorizontal = false;
-
-// let imageElement = document.getElementById('Bơ');
-// let imageElement = document.getElementById('bé_Bơ');
-// let imageElement = document.getElementById('HaiNgười');
-// let imageElement = document.getElementById('baNgười');
-let imageElement = document.getElementById('bốnNgười');
+let imageElement = document.getElementById('image');
 
 let poseLength;
 let keypointsLength;
 let allPoses = [];
 let p5Width = imageElement.width;
 let p5Height = imageElement.height;
-
-let nosePositionX;
-let nosePositionY;
-
 
 /*
    More about PoseNet and the parameters:
@@ -46,10 +37,17 @@ let nosePositionY;
 
 async function loadPoseNet(){
   posenet.load({
+  //High speed, less accurate model
     architecture: 'MobileNetV1',
     outputStride: 16,
-    // inputResolution: { width: 640, height: 480 },
+    inputResolution: { width: 640, height: 480 },
     multiplier: 1.0
+
+  //High accuracy, cost of speed model
+    // architecture: 'ResNet50',
+    // outputStride: 16,
+    // inputResolution: { width: 640, height: 480 },
+    // quantBytes: 2
   }).then(function(net){
        return net.estimateMultiplePoses(imageElement, {
          flipHorizontal: false,
@@ -57,15 +55,11 @@ async function loadPoseNet(){
          scoreThreshold: 0.5,
          nmsRadius: 20})
      }).then(function(poses){
+       allPoses = poses;
        poseLength = poses.length;
        keypointsLength = poses[0].keypoints.length;
-       allPoses = poses;
 
-       nosePositionX = allPoses[0].keypoints[0].position.x;
-       nosePositionY = allPoses[0].keypoints[0].position.y;
-       console.log(poses);
        console.log(allPoses);
-       // console.log(nosePositionX);
      })
 }
 
@@ -77,22 +71,117 @@ canvas = p => {
  p.setup = () => {
    p.createCanvas(p5Width, p5Height);
    p.clear();
-   p.ellipse(p.width/2, p.height/2, 100, 100);
+   // p.ellipse(p.width/2, p.height/2, 100, 100);
+
+
  }
 
  p.draw = () => {
-   if(allPoses != undefined){
-     console.log(nosePositionX);
-   }
+   p.drawSkeleton();
+   // console.log(p.frameRate());
+ }
 
+
+ p.drawSkeleton = () => {
    if(allPoses != undefined){
      for(let i=0; i < poseLength; i++){
-       for(let j=0; j < keypointsLength; i++){
+       for(let j=0; j < keypointsLength; j++){
+
+         p.fill(255);
+         p.stroke(255);
+         //--- Draw points ---
          p.ellipse(
            allPoses[i].keypoints[j].position.x,
            allPoses[i].keypoints[j].position.y,
-           5,
-           5
+           2,
+           2
+         );
+
+         //--- Draw lines ---
+
+         //Shoulder
+         p.line(
+           allPoses[i].keypoints[5].position.x,
+           allPoses[i].keypoints[5].position.y,
+           allPoses[i].keypoints[6].position.x,
+           allPoses[i].keypoints[6].position.y,
+         );
+         //TorsoLeft
+         p.line(
+           allPoses[i].keypoints[5].position.x,
+           allPoses[i].keypoints[5].position.y,
+           allPoses[i].keypoints[11].position.x,
+           allPoses[i].keypoints[11].position.y,
+         );
+         //TorsoRight
+         p.line(
+           allPoses[i].keypoints[6].position.x,
+           allPoses[i].keypoints[6].position.y,
+           allPoses[i].keypoints[12].position.x,
+           allPoses[i].keypoints[12].position.y,
+         );
+         //Hip
+         p.line(
+           allPoses[i].keypoints[11].position.x,
+           allPoses[i].keypoints[11].position.y,
+           allPoses[i].keypoints[12].position.x,
+           allPoses[i].keypoints[12].position.y,
+         );
+         //LeftUpperArm
+         p.line(
+           allPoses[i].keypoints[5].position.x,
+           allPoses[i].keypoints[5].position.y,
+           allPoses[i].keypoints[7].position.x,
+           allPoses[i].keypoints[7].position.y,
+         );
+         //LeftUpperArm
+         p.line(
+           allPoses[i].keypoints[6].position.x,
+           allPoses[i].keypoints[6].position.y,
+           allPoses[i].keypoints[8].position.x,
+           allPoses[i].keypoints[8].position.y,
+         );
+         //LeftForeArm
+         p.line(
+           allPoses[i].keypoints[7].position.x,
+           allPoses[i].keypoints[7].position.y,
+           allPoses[i].keypoints[9].position.x,
+           allPoses[i].keypoints[9].position.y,
+         );
+         //RightForeArm
+         p.line(
+           allPoses[i].keypoints[8].position.x,
+           allPoses[i].keypoints[8].position.y,
+           allPoses[i].keypoints[10].position.x,
+           allPoses[i].keypoints[10].position.y,
+         );
+         //LeftThigh
+         p.line(
+           allPoses[i].keypoints[11].position.x,
+           allPoses[i].keypoints[11].position.y,
+           allPoses[i].keypoints[13].position.x,
+           allPoses[i].keypoints[13].position.y,
+         );
+         //RightThigh
+         p.line(
+           allPoses[i].keypoints[12].position.x,
+           allPoses[i].keypoints[12].position.y,
+           allPoses[i].keypoints[14].position.x,
+           allPoses[i].keypoints[14].position.y,
+         );
+         //LeftLeg
+         p.line(
+           allPoses[i].keypoints[13].position.x,
+           allPoses[i].keypoints[13].position.y,
+           allPoses[i].keypoints[15].position.x,
+           allPoses[i].keypoints[15].position.y,
+         );
+         //RightLeg
+         p.line(
+           allPoses[i].keypoints[14].position.x,
+           allPoses[i].keypoints[14].position.y,
+           allPoses[i].keypoints[16].position.x,
+           allPoses[i].keypoints[16].position.y,
          );
        }
      }
