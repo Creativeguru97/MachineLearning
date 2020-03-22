@@ -50,7 +50,7 @@ element.addEventListener("play", () => {
   poses = await net.estimateMultiplePoses(element, {
     flipHorizontal: false,
     maxDetections: 2,
-    scoreThreshold: 0.6,
+    scoreThreshold: 0.8,
     nmsRadius: 20
   })
 
