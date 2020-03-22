@@ -5,8 +5,8 @@
 let flipHorizontal = false;
 let imageElement = document.getElementById('image');
 
-let poseLength;
-let keypointsLength;
+let poseLength;//How many people detected?
+let keypointsLength;//How many body key point detected?
 let allPoses = [];
 let p5Width = imageElement.width;
 let p5Height = imageElement.height;
@@ -40,7 +40,7 @@ async function loadPoseNet(){
   //High speed, less accurate model
     architecture: 'MobileNetV1',
     outputStride: 16,
-    inputResolution: { width: 640, height: 480 },
+    inputResolution: { width: p5Width, height: p5Height },
     multiplier: 1.0
 
   //High accuracy, cost of speed model

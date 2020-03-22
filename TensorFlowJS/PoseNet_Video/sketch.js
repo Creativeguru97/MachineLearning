@@ -9,14 +9,16 @@
 
 //I think this is the simplest PoseNet Video feeding Implementation ever.
 
+let flipHorizontal = false;
+let element = document.getElementById('video');
+
 let net;
 let poses = [];//Must be array, because estimateMultiplePoses() returns array
+let poseLength;//How many people detected?
+let keypointsLength;//How many body key point detected?
 
-let nosePositionX;
-let nosePositionY;
-
-const widthValue = 640;
-const heightValue = 480;
+const widthValue = element.width;
+const heightValue = element.height;
 
 
 async function loadPoseNet(){
@@ -24,7 +26,7 @@ async function loadPoseNet(){
   architecture: 'MobileNetV1',
   outputStride: 16,
   inputResolution: { width: widthValue/2, height: heightValue/2 },
-  multiplier: 0.5
+  multiplier: 0.75
   })
 }
 
@@ -41,9 +43,6 @@ navigator.mediaDevices.getUserMedia({video:{width: widthValue, height: heightVal
 })
 .catch((err) => { console.log(err.name + ": " + err.message); });
 
-let flipHorizontal = false;
-let element = document.getElementById('video');
-
 
 element.addEventListener("play", () => {
 
@@ -55,15 +54,10 @@ element.addEventListener("play", () => {
     nmsRadius: 20
   })
 
-  nosePositionX = poses[0].keypoints[0].position.x;
-  nosePositionY = poses[0].keypoints[0].position.y;
+  poseLength = poses.length;
+  keypointsLength = poses[0].keypoints.length;
 
-  console.log(poses);
-
-  // console.log("----------");
-  // console.log("x: "+nosePositionX);
-  // console.log("y: "+nosePositionY);
-  // console.log("----------");
+  // console.log(poses);
 
 }, 50)
 
@@ -82,10 +76,110 @@ canvas = p => {
 
   p.draw = () => {
     p.clear();
-    if(nosePositionX != undefined && nosePositionY != undefined){
-      p.ellipse(nosePositionX, nosePositionY, 20, 20);
-    }
+    if(poses != undefined){
+      for(let i=0; i < poseLength; i++){
+       for(let j=0; j < keypointsLength; j++){
+         p.fill(255);
+         p.stroke(255);
 
+         //--- Draw points ---
+         p.ellipse(
+           poses[i].keypoints[j].position.x,
+           poses[i].keypoints[j].position.y,
+           2,
+           2
+         );
+
+         //--- Draw lines ---
+
+         //Shoulder
+         p.line(
+           poses[i].keypoints[5].position.x,
+           poses[i].keypoints[5].position.y,
+           poses[i].keypoints[6].position.x,
+           poses[i].keypoints[6].position.y,
+         );
+         //TorsoLeft
+         p.line(
+           poses[i].keypoints[5].position.x,
+           poses[i].keypoints[5].position.y,
+           poses[i].keypoints[11].position.x,
+           poses[i].keypoints[11].position.y,
+         );
+         //TorsoRight
+         p.line(
+           poses[i].keypoints[6].position.x,
+           poses[i].keypoints[6].position.y,
+           poses[i].keypoints[12].position.x,
+           poses[i].keypoints[12].position.y,
+         );
+         //Hip
+         p.line(
+           poses[i].keypoints[11].position.x,
+           poses[i].keypoints[11].position.y,
+           poses[i].keypoints[12].position.x,
+           poses[i].keypoints[12].position.y,
+         );
+         //LeftUpperArm
+         p.line(
+           poses[i].keypoints[5].position.x,
+           poses[i].keypoints[5].position.y,
+           poses[i].keypoints[7].position.x,
+           poses[i].keypoints[7].position.y,
+         );
+         //LeftUpperArm
+         p.line(
+           poses[i].keypoints[6].position.x,
+           poses[i].keypoints[6].position.y,
+           poses[i].keypoints[8].position.x,
+           poses[i].keypoints[8].position.y,
+         );
+         //LeftForeArm
+         p.line(
+           poses[i].keypoints[7].position.x,
+           poses[i].keypoints[7].position.y,
+           poses[i].keypoints[9].position.x,
+           poses[i].keypoints[9].position.y,
+         );
+         //RightForeArm
+         p.line(
+           poses[i].keypoints[8].position.x,
+           poses[i].keypoints[8].position.y,
+           poses[i].keypoints[10].position.x,
+           poses[i].keypoints[10].position.y,
+         );
+         //LeftThigh
+         p.line(
+           poses[i].keypoints[11].position.x,
+           poses[i].keypoints[11].position.y,
+           poses[i].keypoints[13].position.x,
+           poses[i].keypoints[13].position.y,
+         );
+         //RightThigh
+         p.line(
+           poses[i].keypoints[12].position.x,
+           poses[i].keypoints[12].position.y,
+           poses[i].keypoints[14].position.x,
+           poses[i].keypoints[14].position.y,
+         );
+         //LeftLeg
+         p.line(
+           poses[i].keypoints[13].position.x,
+           poses[i].keypoints[13].position.y,
+           poses[i].keypoints[15].position.x,
+           poses[i].keypoints[15].position.y,
+         );
+         //RightLeg
+         p.line(
+           poses[i].keypoints[14].position.x,
+           poses[i].keypoints[14].position.y,
+           poses[i].keypoints[16].position.x,
+           poses[i].keypoints[16].position.y,
+         );
+
+       }
+      }
+    }
     // console.log(p.frameRate());
   }
 }
