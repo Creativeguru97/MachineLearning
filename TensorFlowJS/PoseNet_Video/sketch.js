@@ -86,8 +86,8 @@ canvas = p => {
          p.ellipse(
            poses[i].keypoints[j].position.x,
            poses[i].keypoints[j].position.y,
-           2,
-           2
+           10,
+           10
          );
 
          //--- Draw lines ---
@@ -180,7 +180,7 @@ canvas = p => {
        }
       }
     }
-    // console.log(p.frameRate());
+    console.log(p.frameRate());
   }
 }
 
